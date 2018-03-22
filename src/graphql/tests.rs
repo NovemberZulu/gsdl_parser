@@ -1,6 +1,6 @@
 use graphql::generated_lalrpop::{parse_Directive, parse_Enum, parse_Field, parse_Interface,
                                  parse_Name, parse_OuterType, parse_Type, parse_Union};
-use graphql::types::{Argument, InnerTypeKind, Value};
+use graphql::scalars::unprocessed::{Argument, InnerTypeKind, Value};
 
 #[test]
 fn parse_name_start_with_letter() {
