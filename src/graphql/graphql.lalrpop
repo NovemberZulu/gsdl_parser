@@ -1,0 +1,58 @@
+use graphql::scalars::unprocessed::{Argument, Enum, Field, GsdlItem, InnerType, InnerTypeKind, Interface,
+                                    SchemeEntryPoints, OuterType, Type, Union, Value};
+
+grammar;
+
+pub Name = r"\pL[\pL\p{Nd}]*"; // pub, so we have parse_Name() for tests
+
+// pub, so we have parse_OuterType() for tests
+pub OuterType: OuterType = {
+    <Name> => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Scalar } },
+    <Name> "!" => OuterType { nullable: false, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Scalar } },
+    "[" <Name> "]" => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: true} } },
+    "[" <Name> "!" "]" => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: false } } },
+    "[" <Name> "]" "!" => OuterType { nullable: false, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: true } } },
+    "[" <Name> "!" "]" "!" => OuterType { nullable: false, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: false } } }
+};
+
+pub Directive = "@" Name ("(" (Name ":" Name)* ")")?; // pub, so we have parse_Directive() for tests
+Directives = Directive*;
+
+// FIXME proper value support
+Value: Value = <Name> => Value::new(<>);
+
+Argument: Argument = <Name> ":" <OuterType> <("=" <Value>)?> => Argument::new(<>);
+
+// pub, so we have parse_Field for tests
+pub Field: Field =  <Name> ":" <OuterType> <("(" <Argument+> ")")?> Directives  => Field::new(<>);
+
+// pub, so we have parse_Interface for tests
+pub Interface: Interface = "interface" <Name> "{"
+    <Field*>
+"}" => Interface::new(<>);
+
+// pub, so we have parse_Type for tests
+pub Type: Type = "type" <Name> <("implements" <Name+>)?> "{"
+    <Field*>
+"}" => Type::new(<>);
+
+// pub, so we have parse_Enum for tests
+pub Enum: Enum = "enum" <Name> "{" <Name*> "}" => Enum::new(<>);
+
+// pub, so we have parse_Union for tests
+pub Union: Union = "union" <Name> "=" <Name> <("|" <Name> )*> => Union::new(<>);
+
+SchemeEntryPoints: SchemeEntryPoints = "scheme" "{" <(<Name> ":" <Name>)*> "}" => SchemeEntryPoints::new(<>);
+
+GsdlItem: GsdlItem = {
+    <Interface> => GsdlItem::Interface(<>),
+    <Type> => GsdlItem::Type(<>),
+    <Enum> => GsdlItem::Enum(<>),
+    <Union> => GsdlItem::Union(<>),
+    <SchemeEntryPoints> => GsdlItem::SchemeEntryPoints(<>)
+};
+
+// the whole GSDL
+pub Gsdl = {
+    <GsdlItem*>
+};

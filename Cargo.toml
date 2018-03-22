@@ -1,0 +1,12 @@
+[package]
+name = "gsdl_parser"
+version = "0.0.1-poc"
+authors = ["Maxim Nazarenko"]
+build = "build.rs"
+
+[dependencies]
+lalrpop-util = "0.14.0" # to use LARLPOP parser
+regex = "0.2.5" # to use LARLPOP parser
+
+[build-dependencies]
+lalrpop = "0.14.0" # to generater parser with LARLPOP
