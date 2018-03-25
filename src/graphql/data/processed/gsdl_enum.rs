@@ -1,7 +1,7 @@
-use std::slice::Iter;
 use super::super::unprocessed;
 use super::value::Values;
-use graphql::scheme::GsdlScalarMap;
+use graphql::scheme::GsdlDataMap;
+use std::slice::Iter;
 
 #[derive(Debug)]
 pub struct Enum<'a> {
@@ -10,12 +10,12 @@ pub struct Enum<'a> {
 }
 
 impl<'a> Enum<'a> {
-    pub fn from(name: &'a str, scalar_map: &'a GsdlScalarMap) -> Enum<'a> {
-        let gsdl_enum = scalar_map
+    pub fn from(name: &'a str, data_map: &'a GsdlDataMap) -> Enum<'a> {
+        let gsdl_enum = data_map
             .get(name)
-            .expect(&format!("Enum {} not found in internal scalar map", name));
+            .expect(&format!("Enum {} not found in internal data map", name));
         match *gsdl_enum {
-            unprocessed::GsdlScalar::Enum(ref gsdl_enum) => {
+            unprocessed::GsdlDataItem::Enum(ref gsdl_enum) => {
                 assert_eq!(*name, gsdl_enum.name);
                 Enum {
                     name: &gsdl_enum.name,
@@ -36,12 +36,12 @@ impl<'a> Enum<'a> {
 
 pub struct EnumIter<'a> {
     iter: Iter<'a, String>,
-    scalar_map: &'a GsdlScalarMap,
+    data_map: &'a GsdlDataMap,
 }
 
 impl<'a> EnumIter<'a> {
-    pub fn from(iter: Iter<'a, String>, scalar_map: &'a GsdlScalarMap) -> EnumIter<'a> {
-        EnumIter { iter, scalar_map }
+    pub fn from(iter: Iter<'a, String>, data_map: &'a GsdlDataMap) -> EnumIter<'a> {
+        EnumIter { iter, data_map }
     }
 }
 
@@ -49,18 +49,18 @@ impl<'a> Iterator for EnumIter<'a> {
     type Item = Enum<'a>;
 
     fn next(&mut self) -> Option<Enum<'a>> {
-        self.iter.next().map(|e| Enum::from(e, self.scalar_map))
+        self.iter.next().map(|e| Enum::from(e, self.data_map))
     }
 }
 
 pub struct Enums<'a> {
     iter: Iter<'a, String>,
-    scalar_map: &'a GsdlScalarMap,
+    data_map: &'a GsdlDataMap,
 }
 
 impl<'a> Enums<'a> {
-    pub fn from(iter: Iter<'a, String>, scalar_map: &'a GsdlScalarMap) -> Enums<'a> {
-        Enums { iter, scalar_map }
+    pub fn from(iter: Iter<'a, String>, data_map: &'a GsdlDataMap) -> Enums<'a> {
+        Enums { iter, data_map }
     }
 }
 
@@ -69,6 +69,6 @@ impl<'a> IntoIterator for Enums<'a> {
     type IntoIter = EnumIter<'a>;
 
     fn into_iter(self) -> EnumIter<'a> {
-        EnumIter::from(self.iter, self.scalar_map)
+        EnumIter::from(self.iter, self.data_map)
     }
 }

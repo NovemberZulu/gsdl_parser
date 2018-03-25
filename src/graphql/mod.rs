@@ -1,9 +1,9 @@
 use graphql::parsable_as_gsdl_item_list::ParsableAsGsdlItemList;
 use graphql::scheme::UnprocessedSource;
 
-mod scalars;
-mod scheme;
+mod data;
 mod parsable_as_gsdl_item_list;
+mod scheme;
 
 mod generated_lalrpop;
 

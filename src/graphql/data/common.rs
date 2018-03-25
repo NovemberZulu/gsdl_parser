@@ -25,7 +25,7 @@ macro_rules! enumerable_enum {
     };
 }
 
-enumerable_enum!(GsdlBuiltinScalar {
+enumerable_enum!(Scalar {
     Boolean,
     Float,
     ID,
@@ -35,6 +35,6 @@ enumerable_enum!(GsdlBuiltinScalar {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum InnerTypeKind {
-    Scalar,
+    NonVector,
     Vector { nullable: bool },
 }

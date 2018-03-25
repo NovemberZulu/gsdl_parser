@@ -1,6 +1,5 @@
+use graphql::data::unprocessed::{Enum, Field, GsdlItem, Interface, SchemeEntryPoints, Type, Union};
 use graphql::scheme::Processed;
-use graphql::scalars::unprocessed::{Enum, Field, GsdlItem, Interface, SchemeEntryPoints, Type,
-                                    Union};
 
 pub struct Unprocessed {
     pub enums: Vec<Enum>,

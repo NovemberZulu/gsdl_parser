@@ -1,28 +1,28 @@
-use graphql::scheme::GsdlScalarMap;
-use std::slice::Iter;
 use super::field::Fields;
 use super::super::unprocessed;
+use graphql::scheme::GsdlDataMap;
+use std::slice::Iter;
 
 #[derive(Debug)]
 pub struct Interface<'a> {
     pub name: &'a String,
     fields_iter: Iter<'a, unprocessed::Field>,
-    scalar_map: &'a GsdlScalarMap,
+    data_map: &'a GsdlDataMap,
 }
 
 impl<'a> Interface<'a> {
-    pub fn from(name: &'a str, scalar_map: &'a GsdlScalarMap) -> Interface<'a> {
-        let interface = scalar_map.get(name).expect(&format!(
-            "Interface {} not found in internal scalar map",
+    pub fn from(name: &'a str, data_map: &'a GsdlDataMap) -> Interface<'a> {
+        let interface = data_map.get(name).expect(&format!(
+            "Interface {} not found in internal data map",
             name
         ));
         match *interface {
-            unprocessed::GsdlScalar::Interface(ref interface) => {
+            unprocessed::GsdlDataItem::Interface(ref interface) => {
                 assert_eq!(*name, interface.name);
                 Interface {
                     name: &interface.name,
                     fields_iter: interface.fields.iter(),
-                    scalar_map,
+                    data_map,
                 }
             }
             _ => panic!(
@@ -33,18 +33,18 @@ impl<'a> Interface<'a> {
     }
 
     pub fn fields(&self) -> Fields {
-        Fields::from(self.fields_iter.clone(), self.scalar_map)
+        Fields::from(self.fields_iter.clone(), self.data_map)
     }
 }
 
 pub struct InterfaceIter<'a> {
     iter: Iter<'a, String>,
-    scalar_map: &'a GsdlScalarMap,
+    data_map: &'a GsdlDataMap,
 }
 
 impl<'a> InterfaceIter<'a> {
-    pub fn from(iter: Iter<'a, String>, scalar_map: &'a GsdlScalarMap) -> InterfaceIter<'a> {
-        InterfaceIter { iter, scalar_map }
+    pub fn from(iter: Iter<'a, String>, data_map: &'a GsdlDataMap) -> InterfaceIter<'a> {
+        InterfaceIter { iter, data_map }
     }
 }
 
@@ -52,20 +52,18 @@ impl<'a> Iterator for InterfaceIter<'a> {
     type Item = Interface<'a>;
 
     fn next(&mut self) -> Option<Interface<'a>> {
-        self.iter
-            .next()
-            .map(|i| Interface::from(i, self.scalar_map))
+        self.iter.next().map(|i| Interface::from(i, self.data_map))
     }
 }
 
 pub struct Interfaces<'a> {
     iter: Iter<'a, String>,
-    scalar_map: &'a GsdlScalarMap,
+    data_map: &'a GsdlDataMap,
 }
 
 impl<'a> Interfaces<'a> {
-    pub fn from(iter: Iter<'a, String>, scalar_map: &'a GsdlScalarMap) -> Interfaces<'a> {
-        Interfaces { iter, scalar_map }
+    pub fn from(iter: Iter<'a, String>, data_map: &'a GsdlDataMap) -> Interfaces<'a> {
+        Interfaces { iter, data_map }
     }
 }
 
@@ -74,6 +72,6 @@ impl<'a> IntoIterator for Interfaces<'a> {
     type IntoIter = InterfaceIter<'a>;
 
     fn into_iter(self) -> InterfaceIter<'a> {
-        InterfaceIter::from(self.iter, self.scalar_map)
+        InterfaceIter::from(self.iter, self.data_map)
     }
 }

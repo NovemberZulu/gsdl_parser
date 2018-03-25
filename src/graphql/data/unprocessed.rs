@@ -1,24 +1,24 @@
-// scalars used by .lalrpop file
+// data used by .lalrpop file
+pub use super::common::{InnerTypeKind, Scalar};
 use std::vec::Vec;
-pub use super::common::{GsdlBuiltinScalar, InnerTypeKind};
 
 #[derive(Debug)]
-pub enum GsdlScalar {
-    Builtin(GsdlBuiltinScalar),
+pub enum GsdlDataItem {
+    Builtin(Scalar),
     Enum(Enum),
     Interface(Interface),
     Type(Type),
     Union(Union),
 }
 
-impl GsdlScalar {
+impl GsdlDataItem {
     pub fn name(&self) -> &str {
         match *self {
-            GsdlScalar::Builtin(builtin_scalar) => GsdlBuiltinScalar::name(builtin_scalar),
-            GsdlScalar::Enum(ref gsdl_enum) => &gsdl_enum.name,
-            GsdlScalar::Interface(ref interface) => &interface.name,
-            GsdlScalar::Type(ref gsdl_type) => &gsdl_type.name,
-            GsdlScalar::Union(ref union) => &union.name,
+            GsdlDataItem::Builtin(scalar) => Scalar::name(scalar),
+            GsdlDataItem::Enum(ref gsdl_enum) => &gsdl_enum.name,
+            GsdlDataItem::Interface(ref interface) => &interface.name,
+            GsdlDataItem::Type(ref gsdl_type) => &gsdl_type.name,
+            GsdlDataItem::Union(ref union) => &union.name,
         }
     }
 }

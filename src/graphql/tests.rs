@@ -1,6 +1,6 @@
+use graphql::data::unprocessed::{Argument, InnerTypeKind, Value};
 use graphql::generated_lalrpop::{parse_Directive, parse_Enum, parse_Field, parse_Interface,
                                  parse_Name, parse_OuterType, parse_Type, parse_Union};
-use graphql::scalars::unprocessed::{Argument, InnerTypeKind, Value};
 
 #[test]
 fn parse_name_start_with_letter() {
@@ -23,32 +23,32 @@ fn parse_name_non_letter_fails() {
 }
 
 #[test]
-fn parse_scalar_type_non_nullable() {
+fn parse_non_vector_non_nullable() {
     let t = parse_OuterType("Type!").unwrap();
 
     assert_eq!(t.nullable, false);
     assert_eq!(t.inner.name, "Type");
-    assert_eq!(t.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.inner.kind, InnerTypeKind::NonVector);
 }
 
 #[test]
-fn parse_scalar_type_nullable() {
+fn parse_non_vector_nullable() {
     let t = parse_OuterType("Type").unwrap();
 
     assert_eq!(t.nullable, true);
     assert_eq!(t.inner.name, "Type");
-    assert_eq!(t.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.inner.kind, InnerTypeKind::NonVector);
 }
 
 #[test]
-fn parse_scalar_type_with_garbage_fails() {
+fn parse_non_vector_with_garbage_fails() {
     assert!(parse_OuterType("Type?").is_err());
     assert!(parse_OuterType("Type!?").is_err());
     assert!(parse_OuterType("Type?!").is_err());
 }
 
 #[test]
-fn parse_vector_type_not_nullable_inner_not_nullable() {
+fn parse_vector_not_nullable_inner_not_nullable() {
     let t = parse_OuterType("[Type!]!").unwrap();
 
     assert_eq!(t.nullable, false);
@@ -57,7 +57,7 @@ fn parse_vector_type_not_nullable_inner_not_nullable() {
 }
 
 #[test]
-fn parse_vector_type_not_nullable_inner_nullable() {
+fn parse_vector_not_nullable_inner_nullable() {
     let t = parse_OuterType("[Type]!").unwrap();
 
     assert_eq!(t.nullable, false);
@@ -66,7 +66,7 @@ fn parse_vector_type_not_nullable_inner_nullable() {
 }
 
 #[test]
-fn parse_vector_type_nullable_inner_not_nullable() {
+fn parse_vector_nullable_inner_not_nullable() {
     let t = parse_OuterType("[Type!]").unwrap();
 
     assert_eq!(t.nullable, true);
@@ -75,7 +75,7 @@ fn parse_vector_type_nullable_inner_not_nullable() {
 }
 
 #[test]
-fn parse_vector_type_nullable_inner_nullable() {
+fn parse_vector_nullable_inner_nullable() {
     let t = parse_OuterType("[Type]").unwrap();
 
     assert_eq!(t.nullable, true);
@@ -84,14 +84,14 @@ fn parse_vector_type_nullable_inner_nullable() {
 }
 
 #[test]
-fn parse_vector_type_with_garbage_fails() {
+fn parse_vector_with_garbage_fails() {
     assert!(parse_OuterType("[Type]?").is_err());
     assert!(parse_OuterType("[Type]!?").is_err());
     assert!(parse_OuterType("[Type]?!").is_err());
 }
 
 #[test]
-fn parse_vector_type_with_inner_garbage_fails() {
+fn parse_vector_with_inner_garbage_fails() {
     assert!(parse_OuterType("[Type?]").is_err());
     assert!(parse_OuterType("[Type!?]").is_err());
     assert!(parse_OuterType("[Type?!]").is_err());
@@ -125,7 +125,7 @@ fn parse_field_no_arguments() {
     assert_eq!(t.arguments, Vec::<Argument>::new());
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
 }
 
 #[test]
@@ -135,14 +135,14 @@ fn parse_field_one_argument_no_default() {
     assert_eq!(t.name, "aaa");
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(t.arguments.len(), 1);
 
     let a = &t.arguments[0];
     assert_eq!(a.name, "ccc");
     assert_eq!(a.argument_type.nullable, true);
     assert_eq!(a.argument_type.inner.name, "ddd");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert!(a.default.is_none());
 }
 
@@ -153,14 +153,14 @@ fn parse_field_one_argument_with_default() {
     assert_eq!(t.name, "aaa");
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(t.arguments.len(), 1);
 
     let a = &t.arguments[0];
     assert_eq!(a.name, "ccc");
     assert_eq!(a.argument_type.nullable, true);
     assert_eq!(a.argument_type.inner.name, "ddd");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(a.default, Option::Some(Value::new("eee")));
 }
 
@@ -171,14 +171,14 @@ fn parse_field_two_arguments_no_default() {
     assert_eq!(t.name, "aaa");
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(t.arguments.len(), 2);
 
     let a = &t.arguments[0];
     assert_eq!(a.name, "ccc");
     assert_eq!(a.argument_type.nullable, true);
     assert_eq!(a.argument_type.inner.name, "ddd");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert!(a.default.is_none());
 
     let a = &t.arguments[1];
@@ -199,21 +199,21 @@ fn parse_field_two_arguments_first_default() {
     assert_eq!(t.name, "aaa");
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(t.arguments.len(), 2);
 
     let a = &t.arguments[0];
     assert_eq!(a.name, "ccc");
     assert_eq!(a.argument_type.nullable, true);
     assert_eq!(a.argument_type.inner.name, "ddd");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(a.default, Option::Some(Value::new("eee")));
 
     let a = &t.arguments[1];
     assert_eq!(a.name, "fff");
     assert_eq!(a.argument_type.nullable, false);
     assert_eq!(a.argument_type.inner.name, "ggg");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert!(a.default.is_none());
 }
 
@@ -224,7 +224,7 @@ fn parse_field_two_arguments_second_default() {
     assert_eq!(t.name, "aaa");
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(t.arguments.len(), 2);
 
     let a = &t.arguments[0];
@@ -241,7 +241,7 @@ fn parse_field_two_arguments_second_default() {
     assert_eq!(a.name, "eee");
     assert_eq!(a.argument_type.nullable, false);
     assert_eq!(a.argument_type.inner.name, "fff");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(a.default, Option::Some(Value::new("ggg")));
 }
 
@@ -252,7 +252,7 @@ fn parse_field_two_arguments_both_default() {
     assert_eq!(t.name, "aaa");
     assert_eq!(t.field_type.nullable, false);
     assert_eq!(t.field_type.inner.name, "bbb");
-    assert_eq!(t.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(t.field_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(t.arguments.len(), 2);
 
     let a = &t.arguments[0];
@@ -269,7 +269,7 @@ fn parse_field_two_arguments_both_default() {
     assert_eq!(a.name, "fff");
     assert_eq!(a.argument_type.nullable, true);
     assert_eq!(a.argument_type.inner.name, "ggg");
-    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(a.argument_type.inner.kind, InnerTypeKind::NonVector);
     assert_eq!(a.default, Option::Some(Value::new("hhh")));
 }
 
@@ -293,13 +293,13 @@ fn parse_interface_() {
     assert_eq!(f.name, "var1");
     assert_eq!(f.field_type.nullable, true);
     assert_eq!(f.field_type.inner.name, "type1");
-    assert_eq!(f.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(f.field_type.inner.kind, InnerTypeKind::NonVector);
 
     let f = &t.fields[1];
     assert_eq!(f.name, "var2");
     assert_eq!(f.field_type.nullable, false);
     assert_eq!(f.field_type.inner.name, "type2");
-    assert_eq!(f.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(f.field_type.inner.kind, InnerTypeKind::NonVector);
 
     let f = &t.fields[2];
     assert_eq!(f.name, "var3");
@@ -375,13 +375,13 @@ fn parse_type_() {
     assert_eq!(f.name, "var1");
     assert_eq!(f.field_type.nullable, true);
     assert_eq!(f.field_type.inner.name, "type1");
-    assert_eq!(f.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(f.field_type.inner.kind, InnerTypeKind::NonVector);
 
     let f = &t.fields[1];
     assert_eq!(f.name, "var2");
     assert_eq!(f.field_type.nullable, false);
     assert_eq!(f.field_type.inner.name, "type2");
-    assert_eq!(f.field_type.inner.kind, InnerTypeKind::Scalar);
+    assert_eq!(f.field_type.inner.kind, InnerTypeKind::NonVector);
 
     let f = &t.fields[2];
     assert_eq!(f.name, "var3");

@@ -1,6 +1,6 @@
 extern crate regex;
 
-use graphql::scalars::unprocessed::GsdlItem;
+use graphql::data::unprocessed::GsdlItem;
 use graphql::generated_lalrpop::parse_Gsdl;
 
 pub trait ParsableAsGsdlItemList {

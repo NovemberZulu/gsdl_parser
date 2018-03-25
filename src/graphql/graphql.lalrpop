@@ -1,5 +1,5 @@
-use graphql::scalars::unprocessed::{Argument, Enum, Field, GsdlItem, InnerType, InnerTypeKind, Interface,
-                                    SchemeEntryPoints, OuterType, Type, Union, Value};
+use graphql::data::unprocessed::{Argument, Enum, Field, GsdlItem, InnerType, InnerTypeKind, Interface,
+                                 SchemeEntryPoints, OuterType, Type, Union, Value};
 
 grammar;
 
@@ -7,8 +7,8 @@ pub Name = r"\pL[\pL\p{Nd}]*"; // pub, so we have parse_Name() for tests
 
 // pub, so we have parse_OuterType() for tests
 pub OuterType: OuterType = {
-    <Name> => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Scalar } },
-    <Name> "!" => OuterType { nullable: false, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Scalar } },
+    <Name> => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::NonVector } },
+    <Name> "!" => OuterType { nullable: false, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::NonVector } },
     "[" <Name> "]" => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: true} } },
     "[" <Name> "!" "]" => OuterType { nullable: true, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: false } } },
     "[" <Name> "]" "!" => OuterType { nullable: false, inner:  InnerType { name: String::from(<>), kind: InnerTypeKind::Vector { nullable: true } } },
