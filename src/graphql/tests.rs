@@ -339,7 +339,7 @@ fn parse_interface_() {
 }
 
 #[test]
-fn parse_interface__directives_ignored() {
+fn parse_interface_directives_ignored() {
     let t = parse_Interface("interface Inter{
         var1: type1 @directive1
         var2: type2! @directive2(aaa2: bbb2)
@@ -421,7 +421,7 @@ fn parse_type_() {
 }
 
 #[test]
-fn parse_type__implements_nothing() {
+fn parse_type_implements_nothing() {
     let t = parse_Type(
         "type Type {
         var1: type1
@@ -439,7 +439,7 @@ fn parse_type__implements_nothing() {
 }
 
 #[test]
-fn parse_type__implements_one() {
+fn parse_type_implements_one() {
     let t = parse_Type(
         "type Type implements inter{
         var1: type1
@@ -457,7 +457,7 @@ fn parse_type__implements_one() {
 }
 
 #[test]
-fn parse_type__implements_error() {
+fn parse_type_implements_error() {
     let t = parse_Type(
         "type Type implements{
         var1: type1
@@ -468,7 +468,7 @@ fn parse_type__implements_error() {
 }
 
 #[test]
-fn parse_type__directives_ignored() {
+fn parse_type_directives_ignored() {
     let t = parse_Type("type typ implements inter1 inter2{
         var1: type1 @directive1
         var2: type2! @directive2(aaa2: bbb2)
@@ -485,7 +485,7 @@ fn parse_type__directives_ignored() {
 }
 
 #[test]
-fn parse_type_enum__zero_values() {
+fn parse_type_enum_zero_values() {
     let t = parse_Enum(
         "enum Enu {
         }",
@@ -496,7 +496,7 @@ fn parse_type_enum__zero_values() {
 }
 
 #[test]
-fn parse_type_enum__one_value() {
+fn parse_type_enum_one_value() {
     let t = parse_Enum(
         "enum Enu {
         enu
@@ -508,7 +508,7 @@ fn parse_type_enum__one_value() {
 }
 
 #[test]
-fn parse_type_enum__three_values() {
+fn parse_type_enum_three_values() {
     let t = parse_Enum(
         "enum Enu {
         enu1
@@ -521,7 +521,7 @@ fn parse_type_enum__three_values() {
 }
 
 #[test]
-fn parse_type_enum__two_values() {
+fn parse_type_enum_two_values() {
     let t = parse_Enum(
         "enum Enu {
         enu1
@@ -534,7 +534,7 @@ fn parse_type_enum__two_values() {
 }
 
 #[test]
-fn parse_union__one_member() {
+fn parse_union_one_member() {
     let t = parse_Union("union un = uni").unwrap();
 
     assert_eq!(t.name, "un");
@@ -542,7 +542,7 @@ fn parse_union__one_member() {
 }
 
 #[test]
-fn parse_union__two_members() {
+fn parse_union_two_members() {
     let t = parse_Union("union un = uni1 | uni2").unwrap();
 
     assert_eq!(t.name, "un");
@@ -550,7 +550,7 @@ fn parse_union__two_members() {
 }
 
 #[test]
-fn parse_union__three_members() {
+fn parse_union_three_members() {
     let t = parse_Union("union un = uni1 | uni2 | uni3").unwrap();
 
     assert_eq!(t.name, "un");
@@ -558,11 +558,11 @@ fn parse_union__three_members() {
 }
 
 #[test]
-fn parse_union__no_members_fails() {
+fn parse_union_no_members_fails() {
     assert!(parse_Union("union un = ").is_err());
 }
 
 #[test]
-fn parse_union__no_pipe_fails() {
+fn parse_union_no_pipe_fails() {
     assert!(parse_Union("union un = uni1 uni2").is_err());
 }
